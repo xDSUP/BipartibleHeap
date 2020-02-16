@@ -7,30 +7,35 @@ namespace CourseSaod
     {
         static void Main(string[] args)
         {
+            Random rnd = new Random();
+            DateTime time1, time2;
+
+            rnd.Next(1, 2);
             BinomialHeap b = new BinomialHeap();
-            b.Insert(8);
-            b.Insert(3);
-            b.Insert(7);
-            b.Insert(1);
-            b.Insert(2);
-            b.Insert(23);
-            b.Insert(31);
-            b.Insert(71);
-            b.Insert(12);
-            b.Insert(22);
+            time1 = DateTime.Now;
+            for (int i = 0; i < 50000; i++)
+                b.Insert(rnd.Next(1, 10000));
+            time2 = DateTime.Now;
+            Console.WriteLine("Вставка 50000 элем в пирамиду за " + (time2-time1));
+
             BinomialHeap c = new BinomialHeap();
-            c.Insert(21);
-            c.Insert(212);
-            c.Insert(5);
-            c.Insert(32);
-            c.Insert(2112);
-            c.Insert(21);
+            time1 = DateTime.Now;
+            for (int i = 0; i < 50000; i++)
+                c.Insert(rnd.Next(1, 100000));
+            time2 = DateTime.Now;
+            Console.WriteLine("Вставка 50000 элем в пирамиду за " + (time2 - time1));
 
+            time1 = DateTime.Now;
             BinomialHeap d = b.Merge(c);
+            time2 = DateTime.Now;
+            Console.WriteLine("Слияние пирамид по 50000 элем кажд за " + (time2 - time1));
 
-            for(int i = 0; i < 10; i++)
-                Console.WriteLine(d.ExtractMin());
-
+            time1 = DateTime.Now;
+            for (int i = 0; i < 100000; i++)
+                d.ExtractMin();
+            time2 = DateTime.Now;
+            Console.WriteLine("Извлечение всех элементов из пирамиды с 100000 элем за " + (time2 - time1));
+            
             Console.WriteLine(b);
         }
     }

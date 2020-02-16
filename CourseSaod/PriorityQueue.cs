@@ -28,6 +28,44 @@ namespace CourseSaod
                 }
             } //степень, кол-во детей.
             public HeapNode(int key) => Key = key;
+            public void CorrectSequense()
+            {
+                HeapNode n = this;
+                HeapNode beforeNode = n;
+                HeapNode tmp = n.brother;
+                var curNode = n.brother;
+
+                while (curNode != null)
+                {
+                    if (beforeNode.Degree >= curNode.Degree)
+                    {
+                        tmp = curNode.brother;
+                        curNode.brother = beforeNode;
+                        if (beforeNode == n)
+                            beforeNode.brother = null;
+                        beforeNode = curNode;
+                        curNode = tmp;
+                        continue;
+                    }
+                    beforeNode = curNode;
+                    curNode = curNode.brother;
+                }
+                
+            }
+
+            //подвязывает больший узел к меньшему, возвращает полученный узел, которомый не знает ничего о братьях
+            public HeapNode Join(HeapNode largestNode)
+            {
+                HeapNode smallerNode = this; ;
+                //подвязываем одно дерево к другому
+
+                largestNode.brother = smallerNode.child;
+                smallerNode.child = largestNode;
+                largestNode.parent = smallerNode;
+                smallerNode.brother = null;
+                return smallerNode;
+            }
+
             public void Show()
             {
                 for (var curNode = this; curNode != null; curNode = curNode.child)
@@ -44,7 +82,32 @@ namespace CourseSaod
         HeapNode head;
         public BinomialHeap() => head = null;
         BinomialHeap(int key) => head = new HeapNode(key);
-        BinomialHeap(HeapNode n) => head = n;
+        BinomialHeap(HeapNode n) 
+        {
+            //n.CorrectSequense();
+
+            HeapNode beforeNode = n;
+            HeapNode tmp = n.brother;
+            var curNode = n.brother;
+
+            while (curNode != null)
+            {
+                if (beforeNode.Degree >= curNode.Degree)
+                {
+                    tmp = curNode.brother;
+                    curNode.brother = beforeNode;
+                    if (beforeNode == n)
+                        beforeNode.brother = null;
+                    beforeNode = curNode;
+                    curNode = tmp;
+                    continue;
+                }
+                beforeNode = curNode;
+                curNode = curNode.brother;
+            }
+            n = beforeNode;
+            head = n;
+        }
 
         public void Insert(int key)
         {
@@ -55,8 +118,8 @@ namespace CourseSaod
         }
         public BinomialHeap Merge(BinomialHeap mergebleHeap)
         {
-            if (this == null) return mergebleHeap;
-            if (mergebleHeap == null) return this;
+            if (this == null || this.head == null) return mergebleHeap;
+            if (mergebleHeap == null || mergebleHeap.head == null) return this;
             BinomialHeap result = new BinomialHeap();
             
            
@@ -64,7 +127,6 @@ namespace CourseSaod
             var curMergebleHeap = mergebleHeap.head;
             
             //установка первого корня в результат
-
             bool comp = this.head.Degree <= mergebleHeap.head.Degree;
             result.head = comp ? this.head : mergebleHeap.head;
             if (comp)
@@ -106,6 +168,12 @@ namespace CourseSaod
             curRes = result.head;
             while(curRes.brother != null)
             {
+                // проверим нет ли 3-х подряд идущих, если есть сливаем последних два
+                if(curRes.brother.brother!= null)
+                {
+                    if (curRes.brother.Degree == curRes.brother.brother.Degree)
+                        curRes = curRes.brother;
+                }
                 if(curRes.Degree == curRes.brother.Degree)
                 {
                     //вырезаем curRes из списка корней
@@ -125,7 +193,7 @@ namespace CourseSaod
                         if (result.head != curRes.child)
                         {
                             // просто проходит по списку корней, пока не находит 
-                            for (c = result.head; c.brother != curRes; c = c.brother) ;
+                            for (c = result.head; c.brother != curRes.child; c = c.brother) ;
                             c.brother = smallestNode;
                         }
                         else
@@ -179,12 +247,17 @@ namespace CourseSaod
             else
                 beforeMinNode.brother = minNode.brother;
 
-            var tmp = new BinomialHeap(minNode.child);
-            // убираем ссылку на удаленный элемент из его детей
-            for (var curNode = tmp.head; curNode != null; curNode = curNode.brother)
-                curNode.parent = null;
-            // сливаем оставшиеся пирамиды вместе
-            this.head = this.Merge(tmp).head;
+            // сохраняем ребенка удаленного узла, если он был
+            BinomialHeap tmp = null;
+            if (minNode.child != null)
+            {
+                tmp = new BinomialHeap(minNode.child);
+                // убираем ссылку на удаленный элемент из его детей
+                for (var curNode = tmp.head; curNode != null; curNode = curNode.brother)
+                    curNode.parent = null;
+            }
+            // сливаем оставшиеся пирамиду детей удал узла и нашу вместе
+            this.head = this.Merge(tmp)?.head;
 
             return minKey;
         }
