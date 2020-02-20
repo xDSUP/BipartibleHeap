@@ -9,61 +9,16 @@ namespace CourseSaod
         #region PrivateZoneHeap
         class HeapNode 
         {
-            #region PrivateZoneNode
+            #region ZoneNode
             public HeapNode parent;
             public HeapNode child;
             public HeapNode brother;
             #endregion
 
-            #region PublicZone
+            #region Zone
             public int Key { get; } //вес
-            public int Degree
-            {
-                get; set;
-                    ////подсчет степени по кол-ву детей
-                    //int i = 0;
-                    //for (var c = this.child; c != null; i++, c = c.child) ;
-                    //return i;
-                
-            } //степень, кол-во детей.
+            public int Degree{ get; set; } //степень, кол-во детей.
             public HeapNode(int key) => Key = key;
-            public void CorrectSequense()
-            {
-                HeapNode n = this;
-                HeapNode beforeNode = n;
-                HeapNode tmp = n.brother;
-                var curNode = n.brother;
-
-                while (curNode != null)
-                {
-                    if (beforeNode.Degree >= curNode.Degree)
-                    {
-                        tmp = curNode.brother;
-                        curNode.brother = beforeNode;
-                        if (beforeNode == n)
-                            beforeNode.brother = null;
-                        beforeNode = curNode;
-                        curNode = tmp;
-                        continue;
-                    }
-                    beforeNode = curNode;
-                    curNode = curNode.brother;
-                }
-                
-            }
-
-            //подвязывает больший узел к меньшему, возвращает полученный узел, которомый не знает ничего о братьях
-            public HeapNode Join(HeapNode largestNode)
-            {
-                HeapNode smallerNode = this; ;
-                //подвязываем одно дерево к другому
-
-                largestNode.brother = smallerNode.child;
-                smallerNode.child = largestNode;
-                largestNode.parent = smallerNode;
-                smallerNode.brother = null;
-                return smallerNode;
-            }
             #endregion
         }
 
@@ -72,14 +27,14 @@ namespace CourseSaod
         BinomialHeap(int key) => head = new HeapNode(key);
         BinomialHeap(HeapNode n) 
         {
-            //n.CorrectSequense();
-
+            
             HeapNode beforeNode = n;
             HeapNode tmp = n.brother;
             var curNode = n.brother;
 
             while (curNode != null)
             {
+                // меняем порядок узлов из 2-1-0 в 0-1-2
                 if (beforeNode.Degree >= curNode.Degree)
                 {
                     tmp = curNode.brother;
@@ -108,7 +63,6 @@ namespace CourseSaod
             if (mergebleHeap == null || mergebleHeap.head == null) return this;
             BinomialHeap result = new BinomialHeap();
             
-           
             var curThis = this.head;
             var curMergebleHeap = mergebleHeap.head;
             
@@ -207,6 +161,7 @@ namespace CourseSaod
 
         public int GetMin()
         {
+            // слабое место
             int min = head.Key;
             for (var c = head; c.brother != null; c = c.brother)
                 if (min > c.brother.Key) min = c.brother.Key;
