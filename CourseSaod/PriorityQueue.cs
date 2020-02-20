@@ -19,13 +19,12 @@ namespace CourseSaod
             public int Key { get; } //вес
             public int Degree
             {
-                get
-                {
-                    //подсчет степени по кол-ву детей
-                    int i = 0;
-                    for (var c = this.child; c != null; i++, c = c.child) ;
-                    return i;
-                }
+                get; set;
+                    ////подсчет степени по кол-ву детей
+                    //int i = 0;
+                    //for (var c = this.child; c != null; i++, c = c.child) ;
+                    //return i;
+                
             } //степень, кол-во детей.
             public HeapNode(int key) => Key = key;
             public void CorrectSequense()
@@ -65,17 +64,6 @@ namespace CourseSaod
                 smallerNode.brother = null;
                 return smallerNode;
             }
-
-            public void Show()
-            {
-                for (var curNode = this; curNode != null; curNode = curNode.child)
-                {
-                    for (var curNodeBrother = curNode.brother; curNodeBrother != null; curNodeBrother = curNodeBrother.brother)
-                    {
-                       // curNodeBrother()
-                    }
-                }
-            }
             #endregion
         }
 
@@ -111,9 +99,7 @@ namespace CourseSaod
 
         public void Insert(int key)
         {
-            var tempNode = new HeapNode(key);
-            if(head == null) { head = tempNode; return; }
-            BinomialHeap temp = new BinomialHeap(tempNode);
+            BinomialHeap temp = new BinomialHeap(key);
             head = this.Merge(temp).head;
         }
         public BinomialHeap Merge(BinomialHeap mergebleHeap)
@@ -186,6 +172,7 @@ namespace CourseSaod
                         //подвязываем одно дерево к другому
                         curRes.brother = smallestNode.child; // братом вставляемому будет ребенок нашего темпа
                         curRes.parent = smallestNode;
+                        curRes.parent.Degree++;
                         smallestNode.child = curRes; // делаем наш вставляемый ребенком
                         curRes = smallestNode; // делаем текущим к ссылке на следующее дерево
                         
@@ -208,6 +195,7 @@ namespace CourseSaod
                         curRes.brother = lagestNode.brother;
                         lagestNode.brother = curRes.child;
                         lagestNode.parent = curRes;
+                        lagestNode.parent.Degree++;
                         curRes.child = lagestNode;
                     }
                     continue;
@@ -262,11 +250,6 @@ namespace CourseSaod
             return minKey;
         }
 
-        public void Show()
-        {
-            for (var c = head; c != null; c = c.brother)
-                c.Show();
-        }
         #endregion
     }
 }
