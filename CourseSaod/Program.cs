@@ -37,32 +37,32 @@ namespace CourseSaod
             time2 = DateTime.Now;
             Console.WriteLine($"Извлечение всех элементов из пирамиды с {total} элем за " + (time2 - time1));
 
-            var bm = new BinomialHeapMin();
-            time1 = DateTime.Now;
-            for (int i = 0; i < total/2; i++)
-                bm.Insert(rnd.Next(1, 100000));
-            time2 = DateTime.Now;
-            Console.WriteLine($"Вставка {total/2} элем в пирамиду за " + (time2 - time1));
+            //var bm = new BinomialHeapMin();
+            //time1 = DateTime.Now;
+            //for (int i = 0; i < total/2; i++)
+            //    bm.Insert(rnd.Next(1, 100000));
+            //time2 = DateTime.Now;
+            //Console.WriteLine($"Вставка {total/2} элем в пирамиду за " + (time2 - time1));
 
-            var cm = new BinomialHeapMin();
-            time1 = DateTime.Now;
-            for (int i = 0; i < total / 2; i++)
-                cm.Insert(rnd.Next(1, 100000));
-            time2 = DateTime.Now;
-            Console.WriteLine($"Вставка {total/2} элем в пирамиду за " + (time2 - time1));
+            //var cm = new BinomialHeapMin();
+            //time1 = DateTime.Now;
+            //for (int i = 0; i < total / 2; i++)
+            //    cm.Insert(rnd.Next(1, 100000));
+            //time2 = DateTime.Now;
+            //Console.WriteLine($"Вставка {total/2} элем в пирамиду за " + (time2 - time1));
 
-            time1 = DateTime.Now;
-            BinomialHeapMin dm = bm.Merge(cm);
-            time2 = DateTime.Now;
-            Console.WriteLine($"Слияние пирамид по {total/2} элем кажд за " + (time2 - time1));
+            //time1 = DateTime.Now;
+            //BinomialHeapMin dm = bm.Merge(cm);
+            //time2 = DateTime.Now;
+            //Console.WriteLine($"Слияние пирамид по {total/2} элем кажд за " + (time2 - time1));
 
-            time1 = DateTime.Now;
-            for (int i = 0; i < total; i++)
-                dm.ExtractMin();
-            time2 = DateTime.Now;
-            Console.WriteLine($"Извлечение всех элементов из пирамиды с {total} элем за " + (time2 - time1));
+            //time1 = DateTime.Now;
+            //for (int i = 0; i < total; i++)
+            //    dm.ExtractMin();
+            //time2 = DateTime.Now;
+            //Console.WriteLine($"Извлечение всех элементов из пирамиды с {total} элем за " + (time2 - time1));
 
-            Console.WriteLine(b);
+            //Console.WriteLine(b);
         }
     }
 }
