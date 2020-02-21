@@ -12,55 +12,37 @@ namespace CourseSaod
             #region PrivateZoneNode
             public HeapNode parent;
             public HeapNode child;
-            public HeapNode brother;
+            public HeapNode rightBrother;
+            //public HeapNode leftBrother;
             #endregion
 
             #region PublicZone
             public int Key { get; set; } //вес
-            public int Degree
-            {
-                get
-                {
-                    //подсчет степени по кол-ву детей
-                    int i = 0;
-                    for (var c = this.child; c != null; i++, c = c.child) ;
-                    return i;
-                }
-            } //степень, кол-во детей.
+            public int Degree { get; set; } //степень, кол-во детей.
             public HeapNode(int key) => Key = key;
             public void CorrectSequense()
             {
                 HeapNode n = this;
                 HeapNode beforeNode = n;
-                HeapNode tmp = n.brother;
-                var curNode = n.brother;
+                HeapNode tmp = n.rightBrother;
+                var curNode = n.rightBrother;
 
                 while (curNode != null)
                 {
                     if (beforeNode.Degree >= curNode.Degree)
                     {
-                        tmp = curNode.brother;
-                        curNode.brother = beforeNode;
+                        tmp = curNode.rightBrother;
+                        curNode.rightBrother = beforeNode;
                         if (beforeNode == n)
-                            beforeNode.brother = null;
+                            beforeNode.rightBrother = null;
                         beforeNode = curNode;
                         curNode = tmp;
                         continue;
                     }
                     beforeNode = curNode;
-                    curNode = curNode.brother;
+                    curNode = curNode.rightBrother;
                 }
 
-            }
-            public void Show()
-            {
-                for (var curNode = this; curNode != null; curNode = curNode.child)
-                {
-                    for (var curNodeBrother = curNode.brother; curNodeBrother != null; curNodeBrother = curNodeBrother.brother)
-                    {
-                        // curNodeBrother()
-                    }
-                }
             }
             #endregion
         }
@@ -77,24 +59,27 @@ namespace CourseSaod
         
         BinomialHeapMin(HeapNode n)
         {
+            _minNode = n;
             HeapNode beforeNode = n;
-            HeapNode tmp = n.brother;
-            var curNode = n.brother;
+            HeapNode tmp = n.rightBrother;
+            var curNode = n.rightBrother;
 
             while (curNode != null)
             {
+                curNode.parent = null;
+                if (curNode.Key != _minNode.Key) _minNode = curNode;
                 if (beforeNode.Degree >= curNode.Degree)
                 {
-                    tmp = curNode.brother;
-                    curNode.brother = beforeNode;
+                    tmp = curNode.rightBrother;
+                    curNode.rightBrother = beforeNode;
                     if (beforeNode == n)
-                        beforeNode.brother = null;
+                        beforeNode.rightBrother = null;
                     beforeNode = curNode;
                     curNode = tmp;
                     continue;
                 }
                 beforeNode = curNode;
-                curNode = curNode.brother;
+                curNode = curNode.rightBrother;
             }
             n = beforeNode;
             head = n;
@@ -115,12 +100,12 @@ namespace CourseSaod
             BinomialHeapMin result = new BinomialHeapMin();
             result._minNode = new HeapNode(int.MaxValue);
 
-            //if (this._minNode.Key < mergebleHeap._minNode.Key)
-            //    result._minNode = this._minNode;
-            //else if (this._minNode.Key == mergebleHeap._minNode.Key && this._minNode.Degree < mergebleHeap._minNode.Degree)
-            //    result._minNode = this._minNode;
-            //else
-            //    result._minNode = mergebleHeap._minNode;
+            if (this._minNode.Key < mergebleHeap._minNode.Key)
+                result._minNode = this._minNode;
+            else if (this._minNode.Key == mergebleHeap._minNode.Key && this._minNode.Degree < mergebleHeap._minNode.Degree)
+                result._minNode = this._minNode;
+            else
+                result._minNode = mergebleHeap._minNode;
 
             var curThis = this.head;
             var curMergebleHeap = mergebleHeap.head;
@@ -129,9 +114,9 @@ namespace CourseSaod
             bool comp = this.head.Degree <= mergebleHeap.head.Degree;
             result.head = comp ? this.head : mergebleHeap.head;
             if (comp)
-                curThis = curThis.brother;
+                curThis = curThis.rightBrother;
             else
-                curMergebleHeap = curMergebleHeap.brother;
+                curMergebleHeap = curMergebleHeap.rightBrother;
 
             HeapNode curRes = result.head;
 
@@ -140,65 +125,70 @@ namespace CourseSaod
             {
                 if (curThis.Degree < curMergebleHeap.Degree)
                 {
-                    curRes.brother = curThis;
-                    curRes = curRes.brother;
-                    curThis = curThis.brother;
+                    curRes.rightBrother = curThis;
+                    curRes = curRes.rightBrother;
+                    curThis = curThis.rightBrother;
                 }
                 else
                 {
-                    curRes.brother = curMergebleHeap;
-                    curRes = curRes.brother;
-                    curMergebleHeap = curMergebleHeap.brother;
+                    curRes.rightBrother = curMergebleHeap;
+                    curRes = curRes.rightBrother;
+                    curMergebleHeap = curMergebleHeap.rightBrother;
                 }
             }
             while (curThis != null)
             {
-                curRes.brother = curThis;
-                curRes = curRes.brother;
-                curThis = curThis.brother;
+                curRes.rightBrother = curThis;
+                curRes = curRes.rightBrother;
+                curThis = curThis.rightBrother;
             }
             while (curMergebleHeap != null)
             {
-                curRes.brother = curMergebleHeap;
-                curRes = curRes.brother;
-                curMergebleHeap = curMergebleHeap.brother;
+                curRes.rightBrother = curMergebleHeap;
+                curRes = curRes.rightBrother;
+                curMergebleHeap = curMergebleHeap.rightBrother;
             }
             // объединение деревьев одной степени 
             curRes = result.head;
             //Console.WriteLine( " GHB " + result._minNode.Key);
-            while (curRes.brother != null)
+            while (curRes.rightBrother != null)
             {
                 // проверим нет ли 3-х подряд идущих, если есть сливаем последних два
-                if (curRes.brother.brother != null)
+                if (curRes.rightBrother.rightBrother != null)
                 {
-                    if (curRes.brother.Degree == curRes.brother.brother.Degree)
+                    if (curRes.rightBrother.Degree == curRes.rightBrother.rightBrother.Degree)
                     {
                         if (curRes.Key < result._minNode.Key) result._minNode = curRes;
-                        curRes = curRes.brother;
+                        curRes = curRes.rightBrother;
                     }
                         
                 }
-                if (curRes.Degree == curRes.brother.Degree)
+                if (curRes.Degree == curRes.rightBrother.Degree)
                 {
                     //вырезаем curRes из списка корней
                     HeapNode c;
-                    if (curRes.Key > curRes.brother.Key)
+                    if (curRes.Key > curRes.rightBrother.Key)
                     {
                         //это дерево, куда мы вставляем
-                        HeapNode smallestNode = curRes.brother;
+                        HeapNode smallestNode = curRes.rightBrother;
 
                         //подвязываем одно дерево к другому
-                        curRes.brother = smallestNode.child; // братом вставляемому будет ребенок нашего темпа
+                        //curRes.leftBrother = smallestNode.child.leftBrother;
+                        //smallestNode.child.leftBrother = curRes;
+                        curRes.rightBrother = smallestNode.child; // братом вставляемому будет ребенок нашего темпа
+                       
                         curRes.parent = smallestNode;
+                        curRes.parent.Degree++;
                         smallestNode.child = curRes; // делаем наш вставляемый ребенком
                         curRes = smallestNode; // делаем текущим к ссылке на следующее дерево
+                        
 
                         //из списка корней удаляем ссылку на вставленное дерево
                         if (result.head != curRes.child)
                         {
                             // просто проходит по списку корней, пока не находит 
-                            for (c = result.head; c.brother != curRes.child; c = c.brother) ;
-                            c.brother = smallestNode;
+                            for (c = result.head; c.rightBrother != curRes.child; c = c.rightBrother) ;
+                            c.rightBrother = smallestNode;
                         }
                         else
                         {
@@ -208,20 +198,19 @@ namespace CourseSaod
                     else
                     {
                         //подвязываем одно дерево к другому
-                        var lagestNode = curRes.brother;
-                        curRes.brother = lagestNode.brother;
-                        lagestNode.brother = curRes.child;
+                        var lagestNode = curRes.rightBrother;
+                        curRes.rightBrother = lagestNode.rightBrother;
+                        lagestNode.rightBrother = curRes.child;
                         lagestNode.parent = curRes;
+                        lagestNode.parent.Degree++;
                         curRes.child = lagestNode;
                     }
-                    if (curRes.Key < result._minNode.Key) result._minNode = curRes;
+                    if (curRes.child == result._minNode) result._minNode = curRes;
                     continue;
                 }
-                if (curRes.Key < result._minNode.Key) result._minNode = curRes;
-                curRes = curRes.brother;
+                curRes = curRes.rightBrother;
             }
             //проверим последний
-            if (curRes.Key < result._minNode.Key) result._minNode = curRes;
             return result;
         }
 
@@ -237,7 +226,7 @@ namespace CourseSaod
             HeapNode beforeMinNode = null;
             HeapNode beforeCurNode = null;
             // ищем минимальный корень, запоминая корень перед ним
-            for (HeapNode curNode = head; curNode != null; beforeCurNode = curNode, curNode = curNode.brother)
+            for (HeapNode curNode = head; curNode != null; beforeCurNode = curNode, curNode = curNode.rightBrother)
             {
                 if (_minNode == curNode)
                     beforeMinNode = beforeCurNode;
@@ -249,9 +238,9 @@ namespace CourseSaod
             }
             //удаляем ссылку из списка корней на мин элемент
             if (beforeMinNode == null)
-                head = _minNode.brother;
+                head = _minNode.rightBrother;
             else
-                beforeMinNode.brother = _minNode.brother;
+                beforeMinNode.rightBrother = _minNode.rightBrother;
 
             // сохраняем ребенка удаленного узла, если он был
             BinomialHeapMin tmp = null;
@@ -261,13 +250,13 @@ namespace CourseSaod
                 // убираем ссылку на удаленный элемент из его детей
 
                 // TODO: Убрать 1 цикл из создания пирамиды в прав порядке.
-                tmp._minNode = new HeapNode(int.MaxValue);
-                for (var curNode = tmp.head; curNode != null; curNode = curNode.brother)
-                {
-                    if (tmp._minNode.Key > curNode.Key) 
-                        tmp._minNode = curNode;
-                    curNode.parent = null;
-                }
+                //tmp._minNode = new HeapNode(int.MaxValue);
+                //for (var curNode = tmp.head; curNode != null; curNode = curNode.rightBrother)
+                //{
+                //    if (tmp._minNode.Key > curNode.Key) 
+                //        tmp._minNode = curNode;
+                //    curNode.parent = null;
+                //}
             }
             // сливаем оставшиеся пирамиду детей удал узла и нашу вместе
             var resultminNode = this._minNode;
