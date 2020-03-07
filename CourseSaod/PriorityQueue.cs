@@ -170,6 +170,7 @@ namespace CourseSaod
 
         public int ExtractMin()
         {
+            if (head == null) return int.MaxValue;
             int minKey = int.MaxValue;
             HeapNode minNode = null;
             HeapNode beforeMinNode = null;
@@ -186,7 +187,7 @@ namespace CourseSaod
             }
             //удаляем ссылку из списка корней на мин элемент
             if (beforeMinNode == null)
-                head = minNode.brother;
+                head = minNode?.brother;
             else
                 beforeMinNode.brother = minNode.brother;
 

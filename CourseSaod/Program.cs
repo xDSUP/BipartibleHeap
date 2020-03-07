@@ -1,15 +1,16 @@
 ﻿using System;
 
 
+
 namespace CourseSaod
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Random rnd = new Random();
             DateTime time1, time2;
-            int total = 3000000;
+            int total = 1000000;
 
             rnd.Next(1, 2);
             BinomialHeap b = new BinomialHeap();
@@ -47,7 +48,11 @@ namespace CourseSaod
             var cm = new BinomialHeapMin();
             time1 = DateTime.Now;
             for (int i = 0; i < total / 2; i++)
-                cm.Insert(rnd.Next(1, 100000));
+            {
+                int da = rnd.Next(1, 100000);
+                cm.Insert(da);
+                
+            }
             time2 = DateTime.Now;
             Console.WriteLine($"Вставка {total / 2} элем в пирамиду за " + (time2 - time1));
 
@@ -58,7 +63,28 @@ namespace CourseSaod
 
             time1 = DateTime.Now;
             for (int i = 0; i < total; i++)
-                dm.ExtractMin();
+            {
+                BinomialHeapMin.HeapNode temp = dm.head;
+                //Console.Write(dm._minNode.Key + " | ");
+                //do
+                //{
+                //    Console.Write(temp.Key + $"({temp.Degree})" + " ");
+                //    temp = temp.rightBrother;
+                //} while (temp != dm.head);
+                //temp = dm.GetMin().child;
+                //var child = temp;
+                //Console.Write("Дети извлеченного ");
+                //do
+                //{
+                //    Console.Write(temp?.Key + $"({temp?.Degree})" + " ");
+                //    temp = temp?.rightBrother;
+                //} while (temp != child);
+                //Console.WriteLine();
+                temp = dm.ExtractMin();
+                //Console.WriteLine("[EXTRACT] | Извлек: " + i + " " + temp.Key);
+
+
+            }
             time2 = DateTime.Now;
             Console.WriteLine($"Извлечение всех элементов из пирамиды с {total} элем за " + (time2 - time1));
 
