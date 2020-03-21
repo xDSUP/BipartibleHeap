@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Text.RegularExpressions;
 
 
 namespace CourseSaod
@@ -32,18 +32,27 @@ namespace CourseSaod
             time2 = DateTime.Now;
             Console.WriteLine($"Слияние пирамид по {total/2} элем кажд за " + (time2 - time1));
 
-            time1 = DateTime.Now;
-            for (int i = 0; i < total; i++)
-                d.ExtractMin();
-            time2 = DateTime.Now;
-            Console.WriteLine($"Извлечение всех элементов из пирамиды с {total} элем за " + (time2 - time1));
+            //time1 = DateTime.Now;
+            //for (int i = 0; i < total; i++)
+            //    d.ExtractMin();
+            //time2 = DateTime.Now;
+            //Console.WriteLine($"Извлечение всех элементов из пирамиды с {total} элем за " + (time2 - time1));
 
             var bm = new BinomialHeapMin();
             time1 = DateTime.Now;
-            for (int i = 0; i < total / 2; i++)
+            Regex regex = new Regex(@"(0|1|01*2)*(1|01*2)");
+            for (int i = 0; i < total; i++)
+            {
                 bm.Insert(rnd.Next(1, 100000));
+                //bm.Insert(i);
+                //Console.WriteLine(bm.ToString());
+                //if(bm.stackTwoNodes.Count > 2) Console.WriteLine("@@SLOMALOS @@");
+                //Console.WriteLine(regex.Matches(bm.ToString())[0]);
+                //if (regex.IsMatch(bm.ToString()) == false) Console.WriteLine("SLOMALOS");
+            }
+            Console.WriteLine(bm.stackTwoNodes.Count);
             time2 = DateTime.Now;
-            Console.WriteLine($"Вставка {total / 2} элем в пирамиду за " + (time2 - time1));
+            Console.WriteLine($"Вставка {total} элем в пирамиду за " + (time2 - time1));
 
             var cm = new BinomialHeapMin();
             time1 = DateTime.Now;
@@ -51,13 +60,16 @@ namespace CourseSaod
             {
                 int da = rnd.Next(1, 100000);
                 cm.Insert(da);
-                
+
             }
             time2 = DateTime.Now;
             Console.WriteLine($"Вставка {total / 2} элем в пирамиду за " + (time2 - time1));
 
             time1 = DateTime.Now;
+            Console.WriteLine(bm.ToString());
+            Console.WriteLine(cm.ToString());
             BinomialHeapMin dm = bm.Merge(cm);
+            Console.WriteLine(dm.ToString());
             time2 = DateTime.Now;
             Console.WriteLine($"Слияние пирамид по {total / 2} элем кажд за " + (time2 - time1));
 
@@ -80,15 +92,16 @@ namespace CourseSaod
                 //    temp = temp?.rightBrother;
                 //} while (temp != child);
                 //Console.WriteLine();
-                temp = dm.ExtractMin();
+                //temp = dm.ExtractMin();
                 //Console.WriteLine("[EXTRACT] | Извлек: " + i + " " + temp.Key);
-
-
             }
             time2 = DateTime.Now;
             Console.WriteLine($"Извлечение всех элементов из пирамиды с {total} элем за " + (time2 - time1));
 
             Console.WriteLine(b);
+            Console.WriteLine(bm);
+
+
         }
     }
 }

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CourseSaod": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
